@@ -18,7 +18,7 @@ class TestInteractionNotes(BaseTestCase):
                 assertion(self.note, object_list)
 
     def test_pages_contains_form(self):
-        """Проверка наличия формы на страницах создания и редактирования заметок."""
+        """На страницах создания и редактирования есть форма."""
         test_cases = (self.add_url, self.edit_url)
         for url in test_cases:
             with self.subTest(page=url):

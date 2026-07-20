@@ -17,7 +17,7 @@ class TestRightsNotes(BaseTestCase):
     }
 
     def test_user_can_create_note(self):
-        """Проверка возможности создания заметки авторизованным пользователем."""
+        """Авторизованный пользователь может создать заметку."""
         Note.objects.all().delete()
 
         response = self.author_client.post(self.add_url, data=self.FORM_DATA)
@@ -80,7 +80,7 @@ class TestRightsNotes(BaseTestCase):
         self.assertEqual(update_note.title, self.FORM_DATA['title'])
         self.assertEqual(update_note.text, self.FORM_DATA['text'])
         self.assertEqual(update_note.slug, self.FORM_DATA['slug'])
-        self.assertEqual(update_note.author, self.author)
+        self.assertEqual(update_note.author, self.note.author)
 
     def test_author_can_delete_note(self):
         """Проверка возможности удаления заметки её автором."""
@@ -91,15 +91,15 @@ class TestRightsNotes(BaseTestCase):
         self.assertEqual(Note.objects.count(), initial_count - 1)
 
     def test_other_user_cant_edit_note(self):
-        """Проверка запрета редактирования заметки пользователем, не автором."""
+        """Не автор не может редактировать заметку."""
         response = self.not_author_client.post(self.edit_url, self.FORM_DATA)
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
         update_note = Note.objects.get(id=self.note.id)
-        self.assertEqual(self.note.title, update_note.title)
-        self.assertEqual(self.note.text, update_note.text)
-        self.assertEqual(self.note.slug, update_note.slug)
-        self.assertEqual(self.note.author, update_note.author)
+        self.assertEqual(update_note.title, self.note.title)
+        self.assertEqual(update_note.text, self.note.text)
+        self.assertEqual(update_note.slug, self.note.slug)
+        self.assertEqual(update_note.author, self.note.author)
 
     def test_other_user_cant_delete_note(self):
         """Проверка запрета удаления заметки пользователем, не автором."""
